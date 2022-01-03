@@ -1,0 +1,104 @@
+import fonts.fontAwesome;
+import win.ui;
+import fsys.dlg;
+/*DSG{{*/
+var winform = win.form(text="文件对话框";right=665;bottom=275;bgcolor=16777215;border="dialog frame";max=false;min=false)
+winform.add(
+btnIFileOpenDir={cls="plus";text="原目录";left=73;top=95;right=172;bottom=125;align="left";bgcolor=-5197169;dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=20}};iconText='\uF07C';notify=1;textPadding={left=39};z=6};
+btnOpen={cls="button";text="打开文件";left=66;top=36;right=172;bottom=71;db=1;dl=1;z=1};
+button={cls="button";text="开始执行";left=198;top=206;right=321;bottom=233;z=7};
+edit={cls="edit";left=199;top=93;right=503;bottom=128;edge=1;multiline=1;z=3};
+edit2={cls="edit";left=198;top=145;right=499;bottom=172;edge=1;z=5};
+editPath={cls="plus";left=204;top=49;right=501;bottom=75;align="right";border={bottom=1;color=-6908266};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-13);notify=1;textPadding={top=6;bottom=2};z=2};
+static2={cls="static";text="新目录";left=75;top=148;right=170;bottom=171;notify=1;transparent=1;z=4}
+)
+/*}}*/
+
+winform.btnIFileOpenDir.skin({
+	background={
+		default=0x668FB2B0;
+		disabled=0xFF594444;
+		hover=0xFF928BB3
+	};
+	color={
+		default=0xFF000000;
+		disabled=0xFF323232
+	}
+})
+
+import console;
+console.open();
+
+import py3;
+import py3.export.aardio;
+py3.appendPath("\py");
+// var pyMain = py3.import("pyMain");
+var pyCode = string.load("\res\pyMain.py");
+py3.exec(pyCode);
+//console.log(py3.getPath());
+import fsys.dlg;
+winform.btnOpen.oncommand = function(id,event){
+	var path = fsys.dlg.open('excel文件|*.xlsx;*.xls|',,,winform);
+	if(path){
+		winform.editPath.text = path;
+	}
+}
+
+
+winform.editPath.skin(
+	background = { 
+		hover = "/res/images/btn-hover.png";
+		focus = "/res/images/btn-focus.jpg";
+		active = "/res/images/btn-active.png";
+		disabled = "/res/images/btn-disabled.png"; 
+	}
+)
+winform.editPath.oncommand = function(id,event){
+	
+}
+
+
+winform.edit.oncommand = function(id,event){
+	
+}
+
+winform.static2.oncommand = function(id,event){
+	
+}
+import fsys.dlg.dir;
+winform.btnIFileOpenDir.oncommand = function(id,event){
+	var path = fsys.dlg.dir(,winform,'请选择目录')
+	if(path){
+		winform.edit.text = path;
+	}	
+}
+
+winform.button.oncommand = function(id,event){
+	var filePath = tostring(winform.editPath.text);
+	var pastFoldPath = tostring(winform.edit.text);
+	var newFoldPath = tostring(winform.edit2.text);
+	io.print(filePath);
+	if(not filePath){
+		console.log("你还没有上传文件");
+	}
+	if not pastFoldPath{
+		io.print("你还没有填写原目录");
+	}
+	if not newFoldPath{
+		io.print("你还没有填写新目录");
+	}
+	try{
+     py3.main.start_exec(filePath, pastFoldPath, newFoldPath);
+	}
+	catch(e){ 
+    	io.print( "错误信息：",e );
+	}
+	
+}
+
+winform.edit2.oncommand = function(id,event){
+
+}
+
+winform.show();
+win.loopMessage();
